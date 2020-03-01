@@ -4,16 +4,21 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 public class Collector {
 
-  public DcMotor rotLeft, rotRight;
-  public Servo servo;
-  public double defaultPower = 0.6;
+    public DcMotor rotLeft, rotRight;
+    public Servo servo;
+    public double defaultPower = 0.6;
 
-    public Collector (DcMotor _rotLeft, DcMotor _rotRight, Servo _servo){
+
+
+    public Collector (DcMotor _rotLeft, DcMotor _rotRight){
        rotLeft = _rotLeft;
        rotRight = _rotRight;
-       servo = _servo;
+       //servo = _servo;
 
        rotLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
        rotRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -22,6 +27,8 @@ public class Collector {
        rotRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
     }
+
+
 
     public void grabStone (){
 

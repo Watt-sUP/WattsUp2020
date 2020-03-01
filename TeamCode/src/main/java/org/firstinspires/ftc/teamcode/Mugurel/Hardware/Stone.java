@@ -7,32 +7,43 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Stone {
 
-   public DcMotor rotRight;
-   public DcMotor rotLeft;
+   public Servo extend;
+   public Servo grab;
+   public Servo rotate;
 
-   public double power = 1.0;
 
-    public Stone (DcMotor rr, DcMotor rl){
-       rotRight = rr;
-       rotLeft = rl;
-
-       rotLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-       rotRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-       rotLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+    public Stone (Servo ext, Servo rot, Servo _grab){
+        extend = ext;
+        rotate = rot;
+        grab = _grab;
 
     }
 
-    public void grab ( ) {
-        rotLeft.setPower(power);
-        rotRight.setPower(power);
+    public void grabStone (){
+       if (grab.getPosition() == 1)
+         grab.setPosition(0);
+       else
+          grab.setPosition(1);
     }
 
-    public void stop ( ) {
-        rotRight.setPower(0);
-        rotLeft.setPower(0);
+    public void flip (){
+        if(rotate.getPosition() == 1)
+          rotate.setPosition(0);
+        else
+          rotate.setPosition(1);
     }
+
+    public void extend (){
+       if (extend.getPosition() == 1)
+           extend.setPosition(0);
+       else
+           extend.setPosition(1);
+    }
+
+
+
+
+
 
 
 

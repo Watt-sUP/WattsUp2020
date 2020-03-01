@@ -8,7 +8,9 @@ public class Config {
     public static final String left_back = "lb";
     public static final String right_back = "rb";
 
-    public static final String servo = "servo1";
+    public static final String grab = "servo1";
+    public static final String extend = "ext";
+    public static final String rotate = "revservo";
 
     public static final String liftLeft = "lifl";
     public static final String liftRight = "lifr";

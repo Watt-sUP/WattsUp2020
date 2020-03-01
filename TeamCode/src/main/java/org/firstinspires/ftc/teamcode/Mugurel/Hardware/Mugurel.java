@@ -32,11 +32,12 @@ public class Mugurel {
              hm.get(DcMotor.class, Config.right_front)
      );
 
-   /*  stone = new Stone(
-             hm.get(DcMotor.class, Config.rotRight),
-             hm.get(DcMotor.class, Config.rotLeft)
+    stone = new Stone(
+             hm.get(Servo.class, Config.extend),
+             hm.get(Servo.class, Config.rotate),
+            hm.get(Servo.class, Config.grab)
      );
-*/
+
      lift = new Lift(
              hm.get(DcMotor.class, Config.liftRight),
              hm.get(DcMotor.class, Config.liftLeft)
@@ -44,8 +45,7 @@ public class Mugurel {
 
      collector = new Collector(
              hm.get(DcMotor.class, Config.rotLeft),
-             hm.get(DcMotor.class, Config.rotRight),
-             hm.get(Servo.class, Config.servo)
+             hm.get(DcMotor.class, Config.rotRight)
      );
 
 
@@ -55,7 +55,7 @@ public class Mugurel {
     public void setTelemetry (Telemetry _t){
         telemetry = _t;
     }
-    public void setOpmode(LinearOpMode _o) { opMode = _o; }
+    public void setOpmode(LinearOpMode _o) { opMode = _o; lift.setOpmode(_o); }
 
 
 }
