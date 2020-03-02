@@ -1,21 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Mugurel.Hardware.Collector;
 import org.firstinspires.ftc.teamcode.Mugurel.Hardware.Mugurel;
-
-import java.util.IllegalFormatCodePointException;
-import java.util.RandomAccess;
-import java.util.zip.DeflaterOutputStream;
+import org.firstinspires.ftc.teamcode.gamepad.Axis;
+import org.firstinspires.ftc.teamcode.gamepad.Button;
+import org.firstinspires.ftc.teamcode.gamepad.GamepadExt;
 
 @TeleOp(name="Driver Controled" , group="Linear Opmode")
 //@Disabled
@@ -43,11 +37,16 @@ public class DriverControled extends LinearOpMode {
     int upTicks = 900;
     int downTicks = -900;
 
+    GamepadExt gaju, duta;
+
 
     @Override
     public void runOpMode()  {
 
         robot = new Mugurel(hardwareMap);
+        gaju = new GamepadExt(gamepad1);
+        duta = new GamepadExt(gamepad2);
+
        // robot.setOpmode(this);
 
         telemetry.addData("Status", "Initialized");
@@ -70,26 +69,15 @@ public class DriverControled extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
 
         while (opModeIsActive()){
+            gaju.update();
+            duta.update();
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.update();
 
-            if (gamepad1.y) robot.runner.setFace(Math.PI);
-            else if (gamepad1.a) robot.runner.setFace(0);
-            else if (gamepad1.x) robot.runner.setFace(-Math.PI / 2.0);
-            else if (gamepad1.b) robot.runner.setFace( Math.PI / 2.0);
+            setFace(gaju.y, gaju.a, gaju.x, gaju.b);
+            move(gaju.left_x, gaju.left_y, gaju.right_y, gaju.left_trigger.toButton(0.3), gaju.right_trigger.toButton(0.3), gaju.dpad_left, gaju.dpad_right);
 
-          double modifier = 0.75;
-          if (gamepad1.right_trigger > 0.3) modifier = 0.23;
-          if (gamepad1.left_trigger > 0.3)  modifier = 0.5;
-
-            final double drive_y = robot.runner.scalePower(gamepad1.left_stick_y);
-            final double drive_x = robot.runner.scalePower(gamepad1.left_stick_x);
-            final double turn = robot.runner.scalePower(gamepad1.right_stick_x);
-
-             if (gamepad1.dpad_right) robot.runner.moveWithAngle(1,0,0, modifier);
-             else if (gamepad1.dpad_left) robot.runner.moveWithAngle(-1,0,0, modifier);
-             else robot.runner.moveWithAngle(drive_x, drive_y, turn, modifier);
 
             /**
              * ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,31 +90,7 @@ public class DriverControled extends LinearOpMode {
              * ////////////////////////////////////////////////////////////////////////////////////////////////////////
              */
 
-            if (gamepad2.x)
-            {
-              if (!x_press)
-              {
-                if(runState == 0)   runState = 1;
-                else    runState = 0;
-
-                x_press = true;
-              }
-            }
-            else x_press = false;
-
-            if (gamepad2.b)
-            {
-              if (!b_press)
-              {
-                if (runState == -1)   runState = 0;
-                else   runState = -1;
-
-                b_press = true;
-              }
-            }
-            else b_press = false;
-
-            robot.collector.setPower(power*(double)runState);
+            setCollector(duta.x, duta.b);
 
             robot.lift.update();
 
@@ -241,5 +205,39 @@ public class DriverControled extends LinearOpMode {
            telemetry.addData("liftLeft", robot.lift.liftLeft.getCurrentPosition());
         }
 
+    }
+
+    private void setFace(Button front, Button back, Button left, Button right) {
+        if (front.pressed()) robot.runner.setFace(Math.PI);
+        else if (back.pressed()) robot.runner.setFace(0);
+        else if (left.pressed()) robot.runner.setFace(-Math.PI / 2.0);
+        else if (right.pressed()) robot.runner.setFace( Math.PI / 2.0);
+    }
+
+    private void move(Axis lx, Axis ly, Axis rx, Button smallPower, Button mediumPower, Button dl, Button dr) {
+        double modifier = 0.75;
+        if (smallPower != null && smallPower.raw) modifier = 0.23;
+        if (mediumPower != null && mediumPower.raw)  modifier = 0.5;
+
+        final double drive_y = robot.runner.scalePower(ly.raw);
+        final double drive_x = robot.runner.scalePower(lx.raw);
+        final double turn = robot.runner.scalePower(rx.raw);
+
+        if (dr != null && dr.raw) robot.runner.moveWithAngle(1,0,0, modifier);
+        else if (dl != null && dl.raw) robot.runner.moveWithAngle(-1,0,0, modifier);
+        else robot.runner.moveWithAngle(drive_x, drive_y, turn, modifier);
+    }
+
+    private void setCollector(Button in, Button out) {
+        if (in.pressed()) {
+            if(runState == 0)   runState = 1;
+            else    runState = 0;
+        }
+
+        if (out.pressed()) {
+            if (runState == -1)   runState = 0;
+            else   runState = -1;
+        }
+        robot.collector.setPower(power*(double)runState);
     }
 }
