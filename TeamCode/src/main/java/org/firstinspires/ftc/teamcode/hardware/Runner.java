@@ -1,12 +1,10 @@
-package org.firstinspires.ftc.teamcode.Hardware;
+package org.firstinspires.ftc.teamcode.hardware;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
-
-public class Motors {
+public class Runner {
 
     public DcMotor left_front , right_front ;
     public DcMotor left_back , right_back ;
@@ -65,7 +63,7 @@ public class Motors {
         }
     }
 
-    public Motors (DcMotor lf, DcMotor rf, DcMotor lb, DcMotor rb) {
+    public Runner(DcMotor lf, DcMotor rf, DcMotor lb, DcMotor rb) {
         left_front = lf;
         right_front = rf;
         left_back = lb;
@@ -93,16 +91,18 @@ public class Motors {
         right_back.setMode(mode);
     }
 
-    public void setPower(MotorPowers pw) {
-        setPower(pw.lf, pw.lb, pw.rf, pw.rb);
-    }
-    public void setPower (double pw) {setPower(pw, pw, pw, pw); }
 
     public void setPowerSmooth(double lf, double lb, double rf, double rb) {
         double pw = 0.1;
         lf = Range.clip(left_front.getPower()-pw, lf, left_front.getPower()+pw);
 
     }
+
+    public void setPower(MotorPowers pw) {
+        setPower(pw.lf, pw.lb, pw.rf, pw.rb);
+    }
+    public void setPower (double pw) {setPower(pw, pw, pw, pw); }
+
 
     public void setPower(double lf, double lb, double rf, double rb) {
         left_front.setPower(lf);
@@ -171,6 +171,41 @@ public class Motors {
     public void setFace(double angle) {
         face_orientation = angle;
     }
+    public void stop (){
+      setPower(0.0);
+      setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+    public void reset (DcMotor.RunMode mode){
+       setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      setMode(mode);
+    }
+    public void setTargetPosition (int lf, int lb, int rf, int rb ){
+    left_front.setTargetPosition(lf);
+    left_back.setTargetPosition(lb);
+    right_front.setTargetPosition(rf);
+    right_back.setTargetPosition(rb);
+    }
+    public int getTicksDistance (){
+     int sum = 0;
+     sum += Math.abs(left_front.getCurrentPosition() - left_front.getTargetPosition());
+     sum += Math.abs(left_back.getCurrentPosition() - left_back.getTargetPosition() );
+     sum += Math.abs(right_front.getCurrentPosition() - right_front.getTargetPosition());
+     sum += Math.abs(right_back.getCurrentPosition() - right_back.getTargetPosition());
+     return sum / 4;
+    }
+
+   public boolean isBusy (){
+      int limit = 10;
+      if ( getTicksDistance() <= limit)
+        return false;
+          return true;
+    }
+
+
+
+
+
 
 
 

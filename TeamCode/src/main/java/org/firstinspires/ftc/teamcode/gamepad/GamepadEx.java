@@ -2,12 +2,12 @@ package org.firstinspires.ftc.teamcode.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-public class GamepadExt {
+public class GamepadEx {
     private Gamepad gamepad;
     public Button dpad_up, dpad_down, dpad_left, dpad_right, a, b, x, y, start, back, left_bumper, right_bumper, left_joystick, right_joystick;
     public Axis left_x, left_y, right_x, right_y, left_trigger, right_trigger;
 
-    public GamepadExt(Gamepad _gamepad) {
+    public GamepadEx(Gamepad _gamepad) {
         gamepad = _gamepad;
 
         dpad_up = new Button();
