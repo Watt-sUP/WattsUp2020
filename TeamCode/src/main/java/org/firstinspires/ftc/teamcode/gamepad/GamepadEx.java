@@ -50,7 +50,7 @@ public class GamepadEx {
         right_joystick.update(gamepad.right_stick_button);
 
         left_x.update(gamepad.left_stick_x);
-        left_y.update(-gamepad.left_stick_y);
+        left_y.update(gamepad.left_stick_y);
         right_x.update(gamepad.right_stick_x);
         right_y.update(-gamepad.right_stick_y);
         left_trigger.update(gamepad.left_trigger);

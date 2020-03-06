@@ -17,10 +17,10 @@ public class Stone {
 
     /// Grabber
     public void grab() {
-        grabServo.setPosition(1);
+        grabServo.setPosition(0);
     }
     public void release() {
-        grabServo.setPosition(0);
+        grabServo.setPosition(1);
     }
 
     /// Extender

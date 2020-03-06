@@ -65,10 +65,11 @@ public class Lift {
     }
 
     public void goToPosition(int position, double speed) {
-        left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+       // left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        //right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left.setTargetPosition(position);
         right.setTargetPosition(position);
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
         left.setPower(speed);
         right.setPower(speed);
     }
@@ -84,16 +85,14 @@ public class Lift {
     }
 
     public void stop() {
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
         goToPosition(getPosition(), 1);
         usingLevels = false;
     }
 
     public void hold() {
-        if(!left.isBusy() || !right.isBusy())   return;
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        goToPosition(getPosition(), 1);
-        usingLevels = false;
+
+        if(isBusy())   return;
+        stop();
     }
 
     public void levelUp() {

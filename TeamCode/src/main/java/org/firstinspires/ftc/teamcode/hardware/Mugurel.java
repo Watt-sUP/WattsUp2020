@@ -18,7 +18,7 @@ public class Mugurel {
     public Telemetry telemetry;
     public LinearOpMode opMode;
 
-    void init() {
+     public void init() {
         runner = new Runner(
                 hardwareMap.get(DcMotor.class, Config.left_back),
                 hardwareMap.get(DcMotor.class, Config.left_front),
@@ -42,6 +42,8 @@ public class Mugurel {
                 hardwareMap.get(DcMotor.class, Config.rotRight)
         );
     }
+
+    public Mugurel () {}
 
     public Mugurel (HardwareMap hm){
         hardwareMap = hm;

@@ -52,19 +52,21 @@ public class DriverControled extends LinearOpMode {
             duta.update();
 
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.update();
+         //   telemetry.update();
 
             setFace(gaju.y, gaju.a, gaju.x, gaju.b);
-            move(gaju.left_x, gaju.left_y, gaju.right_y, gaju.left_trigger.toButton(0.3), gaju.right_trigger.toButton(0.3), gaju.dpad_left, gaju.dpad_right);
+            move(gaju.left_x, gaju.left_y, gaju.right_x, gaju.left_trigger.toButton(0.3), gaju.right_trigger.toButton(0.3), gaju.dpad_left, gaju.dpad_right);
 
             setCollector(duta.x, duta.b);
-            moveLift(duta.left_x, duta.dpad_up, duta.dpad_down, duta.left_trigger.toButton(0.3));
+            moveLift(duta.left_y, duta.dpad_up, duta.dpad_down, duta.left_trigger.toButton(0.3));
             stoneHandler(duta.right_bumper, duta.left_bumper, duta.right_trigger.toButton(0.3), duta.a, duta.y);
 
             telemetry.addData("Servo Position", robot.stone.extendServo.getPosition());
             telemetry.addData("Mode", robot.lift.left.getMode());
             telemetry.addData("liftRight", robot.lift.right.getCurrentPosition());
             telemetry.addData("liftLeft", robot.lift.left.getCurrentPosition());
+            telemetry.addData("left_y", duta.left_y.raw);
+            telemetry.addData("isBusy", robot.lift.left.isBusy());
             telemetry.update();
         }
 
@@ -78,7 +80,7 @@ public class DriverControled extends LinearOpMode {
     }
 
     private void move(Axis lx, Axis ly, Axis rx, Button smallPower, Button mediumPower, Button dl, Button dr) {
-        double modifier = 0.75;
+        double modifier = 1.0;
         if (smallPower != null && smallPower.raw) modifier = 0.23;
         if (mediumPower != null && mediumPower.raw)  modifier = 0.5;
 
@@ -105,19 +107,20 @@ public class DriverControled extends LinearOpMode {
         robot.collector.setPower(power * collectorState);
     }
 
-    private void moveLift(Axis manual, Button levelUp, Button levelDown, Button stop) {
-        if(manual != null && Math.abs(manual.raw) > 0.03)
-            robot.lift.setManualPower(manual.raw);
-        else if(levelUp != null && levelUp.pressed())
-            robot.lift.levelUp();
-        else if(levelDown != null && levelDown.pressed())
-            robot.lift.levelDown();
-        else if(stop != null && stop.pressed())
-            robot.lift.stop();
+    private void moveLift (Axis manual, Button levelUp, Button levelDown, Button stop) {
+        if (manual != null && Math.abs(manual.raw) > 0.1)
+           robot.lift.setManualPower(-manual.raw);
         else
             robot.lift.hold();
-    }
 
+         if (levelUp != null && levelUp.pressed())
+            robot.lift.levelUp();
+        else if (levelDown != null && levelDown.pressed())
+            robot.lift.levelDown();
+        else if (stop != null && stop.pressed())
+            robot.lift.stop();
+
+    }
     private void stoneHandler(Button extend, Button retract, Button reset, Button grab, Button release) {
         if(extend != null && extend.pressed())
             robot.stone.extend();
@@ -128,8 +131,11 @@ public class DriverControled extends LinearOpMode {
             robot.stone.grab();
             collectorState = 0;
             robot.collector.setPower(0);
-        } else if(release != null && release.pressed())
+        } else if(release != null && release.pressed()) {
             robot.stone.release();
+            collectorState = 1;
+            robot.collector.setPower(1.0);
+        }
 
         if(reset != null && reset.pressed()) {
             inReset = true;
